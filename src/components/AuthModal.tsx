@@ -39,8 +39,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, currentUs
   const handleGoogleLogin = async () => {
     setLoading(true);
     const res = await firebaseService.loginWithGoogle();
-    if (!res.success) setErrorMsg(res.error || 'Error con Google Sign-In');
-    else onClose();
+    if (!res.success) {
+      if (res.error === 'auth/unauthorized-domain') {
+        setErrorMsg('Dominio no autorizado. Agrega el dominio en Firebase Console -> Auth -> Settings -> Authorized domains.');
+      } else {
+        setErrorMsg(res.error || 'Error con Google Sign-In');
+      }
+    } else {
+      onClose();
+    }
     setLoading(false);
   };
 

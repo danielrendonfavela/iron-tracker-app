@@ -8,6 +8,8 @@ import {
   signOut as firebaseSignOut,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   updateProfile,
   User,
   Auth
@@ -67,6 +69,11 @@ class FirebaseService {
       if (!this.auth.currentUser) {
         signInAnonymously(this.auth).catch(() => {});
       }
+
+      // Handle redirect result for Google Sign-In (PWA/Mobile)
+      getRedirectResult(this.auth).catch((error) => {
+        console.error('Error al procesar redirect de Google:', error);
+      });
 
       return true;
     } catch (e: any) {
