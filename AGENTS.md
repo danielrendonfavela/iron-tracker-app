@@ -16,14 +16,17 @@ Bienvenido al proyecto **IRON TRACKER**. Este archivo contiene el contexto funda
 
 ## 📜 Reglas de Gobernanza e Ingeniería (OBLIGATORIAS)
 
-1. **Cero Auto-Merge / Cero Push Directo a `uat` o `prod`**:
-   - Todo cambio debe realizarse en su propia rama `feature/nombre-corto` o `fix/nombre-corto`.
-   - Los cambios deben enviarse como **Pull Requests (PRs) a `develop`** y esperar la **aprobación manual del usuario**.
+1. **Flujo Automatizado de Issues & PRs (`iron-issue-workflow`)**:
+   - Todo Bug o User Story detectado debe primero **registrarse como Issue en GitHub** con criterios de aceptación.
+   - El trabajo de código se delega a un **Subagente en un Git Worktree aislado** (`Workspace: 'share'`) bajo la rama `fix/issue-XX` o `feature/issue-XX`.
 
-2. **Verificación Pre-Merge**:
+2. **Cero Auto-Merge / Cero Push Directo a `uat` o `prod`**:
+   - Todo cambio debe realizarse en su propia rama y enviarse mediante un **Pull Request (PR) a `develop`** para la **aprobación manual del usuario**.
+
+3. **Verificación Pre-Merge**:
    - Todo código debe ser validado ejecutando `npm run build` sin errores ni advertencias de TypeScript antes de solicitar revisión de PR.
 
-3. **Historial de Features en `docs/specs/`**:
+4. **Historial de Features en `docs/specs/`**:
    - Cada nueva especificación, plan de implementación o cambio arquitectónico debe registrarse en la carpeta `docs/specs/` con nomenclatura incremental (`001-...md`, `002-...md`).
 
 ---
@@ -36,3 +39,4 @@ Consulta los documentos históricos en la carpeta `docs/specs/` para conocer el 
 - [`docs/specs/002-firebase-multi-user-auth.md`](file:///c:/Users/Danie/Documents/Gym_App/docs/specs/002-firebase-multi-user-auth.md): Autenticación multi-usuario e integración Firestore por usuario.
 - [`docs/specs/003-whoop-biometric-integration.md`](file:///c:/Users/Danie/Documents/Gym_App/docs/specs/003-whoop-biometric-integration.md): Widget de recuperación WHOOP y Coach IA biométrico.
 - [`docs/specs/004-git-flow-pr-governance.md`](file:///c:/Users/Danie/Documents/Gym_App/docs/specs/004-git-flow-pr-governance.md): Gobernanza de ramas (develop, uat, prod) y flujo de PRs.
+- [`docs/specs/005-automated-issue-subagent-workflow.md`](file:///c:/Users/Danie/Documents/Gym_App/docs/specs/005-automated-issue-subagent-workflow.md): Protocolo de automatización de GitHub Issues y subagentes en Git Worktrees.
