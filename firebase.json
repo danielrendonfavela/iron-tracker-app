@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "iron-tracker-gym",
     "public": "dist",
     "ignore": [
       "firebase.json",
