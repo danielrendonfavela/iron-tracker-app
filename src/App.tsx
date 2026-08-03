@@ -8,15 +8,18 @@ import { HistoryTab } from './components/tabs/HistoryTab';
 import { ToolsTab } from './components/tabs/ToolsTab';
 
 import { VersionBanner } from './components/VersionBanner';
+import { OnboardingModal } from './components/OnboardingModal';
 import { useTimer } from './hooks/useTimer';
 import { useWorkouts } from './hooks/useWorkouts';
 import { useTheme } from './hooks/useTheme';
+import { useOnboarding } from './hooks/useOnboarding';
 import { TabType } from './types/gym';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>('session');
 
   const { isRunning, formattedTime, toggleTimer, resetTimer } = useTimer();
+  const { showOnboarding, completeOnboarding, triggerOnboarding } = useOnboarding();
   useTheme(); // Init theme hook
   const {
     workouts,
