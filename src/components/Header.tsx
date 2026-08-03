@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Flame, Timer, Play, Pause, RotateCcw, Settings, Cloud, Smartphone, X, ShieldCheck, User as UserIcon } from 'lucide-react';
 import { firebaseService } from '../services/firebaseService';
 import { AuthModal } from './AuthModal';
+import { ThemeSelector } from './ThemeSelector';
 
 interface HeaderProps {
   formattedTime: string;
@@ -35,11 +36,11 @@ export const Header: React.FC<HeaderProps> = ({
   const userDisplayName = currentUser?.displayName || currentUser?.email?.split('@')[0] || (currentUser?.isAnonymous ? 'Invitado' : 'Usuario');
 
   return (
-    <header className="bg-zinc-950 border-b-2 border-red-600 p-4 pt-safe sticky top-0 z-30 flex flex-col gap-3 shadow-lg shadow-black/50">
+    <header className="bg-zinc-100 dark:bg-zinc-950 border-b-2 border-red-600 p-4 pt-safe sticky top-0 z-30 flex flex-col gap-3 shadow-lg shadow-black/10 dark:shadow-black/50">
       <div className="max-w-md mx-auto w-full flex items-center justify-between">
         {/* Marca & Botones Perfil / Ajustes */}
         <div className="flex items-center gap-2">
-          <h1 className="text-xl font-black tracking-tighter flex items-center gap-2 text-white uppercase">
+          <h1 className="text-xl font-black tracking-tighter flex items-center gap-2 text-zinc-900 dark:text-white uppercase">
             <Flame className="w-6 h-6 text-red-600 fill-red-600 animate-pulse" /> IRON TRACKER
           </h1>
 
@@ -47,7 +48,7 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Botón de Perfil de Usuario */}
             <button
               onClick={() => setShowAuthModal(true)}
-              className="p-1.5 rounded border border-zinc-800 bg-black text-zinc-300 hover:text-white hover:border-red-600 transition-colors flex items-center gap-1.5"
+              className="p-1.5 rounded border border-zinc-800 bg-white dark:bg-black text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-red-600 transition-colors flex items-center gap-1.5"
               title="Mi Cuenta / Iniciar Sesión"
             >
               <UserIcon className="w-4 h-4 text-red-500" />
@@ -62,7 +63,7 @@ export const Header: React.FC<HeaderProps> = ({
               className={`p-1.5 rounded border transition-colors flex items-center gap-1 ${
                 isFirebaseActive
                   ? 'border-green-600/60 bg-green-950/30 text-green-400'
-                  : 'border-zinc-800 bg-black text-zinc-400 hover:text-white'
+                  : 'border-zinc-800 bg-white dark:bg-black text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
               }`}
               title="Información de la App e iPhone PWA"
             >
@@ -72,16 +73,16 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Cronómetro */}
-        <div className="flex items-center gap-2 bg-black border border-zinc-800 px-3 py-1.5 rounded-sm">
+        <div className="flex items-center gap-2 bg-white dark:bg-black border border-zinc-300 dark:border-zinc-800 px-3 py-1.5 rounded-sm">
           <Timer className={`w-4 h-4 ${isRunning ? 'text-red-500 animate-pulse' : 'text-zinc-500'}`} />
           <span
             className={`font-mono text-lg font-black w-[54px] text-center tracking-tight ${
-              isRunning ? 'text-white' : 'text-zinc-500'
+              isRunning ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 dark:text-zinc-500'
             }`}
           >
             {formattedTime}
           </span>
-          <div className="flex gap-1 border-l border-zinc-800 pl-2 ml-1">
+          <div className="flex gap-1 border-l border-zinc-300 dark:border-zinc-800 pl-2 ml-1">
             <button
               onClick={onToggleTimer}
               title={isRunning ? 'Pausar' : 'Iniciar'}
@@ -121,6 +122,14 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <X className="w-5 h-5" />
               </button>
+            </div>
+
+            {/* THEME SELECTOR */}
+            <div className="bg-white dark:bg-black p-4 border border-zinc-300 dark:border-zinc-800 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <h4 className="text-xs font-black text-zinc-900 dark:text-white uppercase">Tema de Interfaz</h4>
+              </div>
+              <ThemeSelector />
             </div>
 
             {/* ESTADO CONEXIÓN */}
