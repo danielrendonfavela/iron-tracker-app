@@ -1,66 +1,46 @@
 ---
 name: iron-git-flow
-description: Workflow estandarizado de Git Flow de 3 ramas (develop -> uat -> prod), Conventional Commits y despliegues verificados para IRON TRACKER.
+description: Workflow estandarizado de Git Flow con ramas protegidas (develop, uat, prod), Cherry-Pick para hotfixes/features pequeñas, Pull Requests (PRs) y despliegues controlados a producción.
 ---
 
-# IRON TRACKER - Git Flow & Deployment Workflow
+# IRON TRACKER - Git Flow & Governance Policy
 
-Esta habilidad define la disciplina de control de versiones y gestión de ramas para el proyecto **IRON TRACKER**.
-
-## 🌲 Estructura de Ramas
-
-1. **`develop`** (Rama principal de trabajo):
-   - Todo el código nuevo, correcciones de errores y nuevas funcionalidades se desarrollan y prueban en `develop`.
-   - **Regla**: Nunca hacer commit directo a `prod`.
-
-2. **`uat`** (User Acceptance Testing / Pruebas):
-   - Rama para congelar versiones de prueba.
-   - Se promueve mediante merge desde `develop` cuando una funcionalidad o versión está lista para revisión.
-
-3. **`prod`** (Producción Oficial):
-   - La rama oficial de producción.
-   - Única rama vinculada a **Firebase Hosting** (`https://iron-tracker-gym.web.app`).
+Esta habilidad impone la protección de ramas, promoción por Cherry-Pick y control de calidad mediante **Pull Requests (PRs)** en GitHub.
 
 ---
 
-## 📝 Convención de Commits (Conventional Commits)
+## 🔒 REGLAS DE ORO DE GOBERNANZA
 
-Cada commit debe usar un prefijo estandarizado:
-- `feat:` Nueva funcionalidad o pantalla de UI (ej: `feat: add Whoop recovery gauge`).
-- `fix:` Corrección de errores de ejecución o UI (ej: `fix: resolve timer reset state`).
-- `refactor:` Reestructuración de código sin cambiar comportamiento externo.
-- `config:` Cambios en variables de entorno, Firebase o configuración del proyecto.
-- `ci:` Cambios en integraciones de empaquetado o despliegue.
+1. **PROHIBIDO ELIMINAR RAMAS NÚCLEO**:
+   - Las ramas **`develop`**, **`uat`** y **`prod`** son **ramas protegidas permanentes**.
+   - **Nunca** presionar el botón "Delete branch" ni borrarlas en GitHub ni en local.
+
+2. **CERO AUTO-MERGE EN UAT / PROD**:
+   - Todo cambio vive en su propia rama `feature/issue-XX` o `fix/issue-XX`.
+   - Se requiere **aprobación manual del USUARIO** en el Pull Request de GitHub.
+
+3. **PROMOCIÓN SELECTIVA VÍA CHERRY-PICK**:
+   - Para arreglos o características pequeñas, se prefiere la técnica **`git cherry-pick <commit-hash>`** hacia `uat` (y luego hacia `prod`) para promover únicamente el cambio aislado sin arrastrar todo el historial no probado de `develop`.
 
 ---
 
-## ⚡ Regla de Verificación Pre-Merge (Build Check)
+## 🌿 Estructura de Ramas
 
-Antes de fusionar código hacia `uat` o `prod`, **SIEMPRE** se debe ejecutar:
+- **`feature/issue-XX-nombre`** / **`fix/issue-XX-nombre`**: Ramas secundarias atómicas.
+- **`develop`**: Integración continua de desarrollo.
+- **`uat`**: Entorno de pruebas pre-producción (`https://iron-tracker-uat.web.app`).
+- **`prod`**: Entorno oficial de producción (`https://iron-tracker-gym.web.app`).
+
+---
+
+## 🔄 Flujo de Promoción por Cherry-Pick (Fixes / Features pequeñas)
 
 ```bash
-npm run build
-```
-
-Si la compilación de TypeScript o el empaquetado de Vite fallan, se prohíbe realizar el merge o push hacia `uat` o `prod`.
-
----
-
-## 🔄 Comandos de Promoción Rápidos
-
-### 1. Promover cambios de `develop` ➔ `uat`:
-```bash
+# 1. Obtener el hash del commit aprobado en develop (ej: abc1234)
 git checkout uat
-git merge develop
+git pull origin uat
+git cherry-pick <commit-hash>
 git push origin uat
-git checkout develop
-```
-
-### 2. Promover y Desplegar de `uat` ➔ `prod` (Firebase Hosting):
-```bash
-git checkout prod
-git merge uat
-git push origin prod
-npx -y firebase-tools@latest deploy --only hosting --project=iron-tracker-gym
+# Despliegue automático o manual a Firebase UAT
 git checkout develop
 ```
