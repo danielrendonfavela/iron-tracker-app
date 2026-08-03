@@ -1,4 +1,5 @@
 import { Workout, AIOperation } from '../types/gym';
+import { WhoopSummary } from '../types/whoop';
 
 export const fetchWithRetry = async (url: string, opts: RequestInit, retries = 3): Promise<any> => {
   for (let i = 0; i < retries; i++) {
@@ -18,11 +19,12 @@ export const fetchWithRetry = async (url: string, opts: RequestInit, retries = 3
 export const queryIronCoach = async (
   userMessage: string,
   workouts: Workout[],
-  apiKey: string
+  apiKey: string,
+  whoopData?: WhoopSummary
 ): Promise<{ text: string; ops?: AIOperation[] }> => {
   if (!apiKey.trim()) {
     return {
-      text: '⚠️ **API Key no configurada**.\n\nPor favor ingresa tu API Key de Gemini en el panel de configuración del Coach para interactuar con la IA.'
+      text: '⚠️ **API Key no configurada**.\n\nPor favor ingresa tu API Key de Gemini en la configuración del Coach para interactuar con la IA.'
     };
   }
 
@@ -38,8 +40,23 @@ export const queryIronCoach = async (
 
   const todayStr = new Date().toISOString().split('T')[0];
 
-  const systemInstruction = `Eres IRON COACH, IA experta en culturismo, entrenamiento de fuerza y administrador de base de datos de gimnasio.
-  
+  const whoopContext = whoopData
+    ? `DATOS DE RECUPERACIÓN Y SALUD DE WHOOP DEL USUARIO HOY:
+- Estado de Recuperación: ${whoopData.recovery.state} (${whoopData.recovery.recoveryScore}%)
+- HRV: ${whoopData.recovery.hrv} ms | Frecuencia Cardíaca en Reposo: ${whoopData.recovery.restingHeartRate} bpm
+- Nivel de Esfuerzo (Strain): ${whoopData.strain.strainScore} / 21
+- Horas de Sueño: ${whoopData.sleep.hoursSlept}h (Calidad: ${whoopData.sleep.sleepQualityPercentage}%)
+
+INSTRUCCIÓN ESPECIAL SOBRE WHOOP:
+Si la recuperación de Whoop es RED (baja recovery < 33%), adviértele amistosamente al usuario que su SNC está fatigado y sugiérele autorregular, bajar el peso un 15% o hacer un día de descarga (Deload).
+Si es GREEN (> 66%), anímalo a buscar un récord personal (PR) con sobrecarga progresiva.
+Si es YELLOW (33-66%), dile que mantenga su volumen estándar.`
+    : 'Datos de Whoop no vinculados aún.';
+
+  const systemInstruction = `Eres IRON COACH, IA experta en culturismo, entrenamiento de fuerza, auto-regulación biológica y administrador de base de datos de gimnasio.
+
+${whoopContext}
+
 HISTORIAL ACTUAL DEL USUARIO:
 ${historySummary || 'Sin registros aún.'}
 
