@@ -35,7 +35,7 @@ export const Header: React.FC<HeaderProps> = ({
   const userDisplayName = currentUser?.displayName || currentUser?.email?.split('@')[0] || (currentUser?.isAnonymous ? 'Invitado' : 'Usuario');
 
   return (
-    <header className="bg-zinc-950 border-b-2 border-red-600 p-4 sticky top-0 z-30 flex flex-col gap-3 shadow-lg shadow-black/50">
+    <header className="bg-zinc-950 border-b-2 border-red-600 p-4 pt-safe sticky top-0 z-30 flex flex-col gap-3 shadow-lg shadow-black/50">
       <div className="max-w-md mx-auto w-full flex items-center justify-between">
         {/* Marca & Botones Perfil / Ajustes */}
         <div className="flex items-center gap-2">
