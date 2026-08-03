@@ -10,6 +10,7 @@ import {
   signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
+  linkWithPopup,
   updateProfile,
   User,
   Auth
@@ -60,15 +61,20 @@ class FirebaseService {
       this.auth = getAuth(this.app);
       this.db = getFirestore(this.app);
 
+      let isInitialAuthResolved = false;
+
       onAuthStateChanged(this.auth, u => {
         this.user = u;
         this.authListeners.forEach(listener => listener(u));
-      });
 
-      // Auto sign in anonymously if not authenticated
-      if (!this.auth.currentUser) {
-        signInAnonymously(this.auth).catch(() => {});
-      }
+        // Auto sign in anonymously ONLY if initial auth resolved and no user exists
+        if (!isInitialAuthResolved) {
+          isInitialAuthResolved = true;
+          if (!u) {
+            signInAnonymously(this.auth!).catch(() => {});
+          }
+        }
+      });
 
       // Handle redirect result for Google Sign-In (PWA/Mobile)
       getRedirectResult(this.auth).catch((error) => {
@@ -126,10 +132,38 @@ class FirebaseService {
     if (!this.auth) return { success: false, error: 'Firebase no configurado' };
     try {
       const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+
+      // If user is currently anonymous, link the Google account to keep data
+      if (this.user && this.user.isAnonymous) {
+        try {
+          await linkWithPopup(this.user, provider);
+          return { success: true };
+        } catch (linkErr: any) {
+          // If already linked or error, fallback to signInWithPopup
+          if (linkErr.code === 'auth/credential-already-in-use') {
+            await signInWithPopup(this.auth, provider);
+            return { success: true };
+          }
+          throw linkErr;
+        }
+      }
+
       await signInWithPopup(this.auth, provider);
       return { success: true };
     } catch (err: any) {
-      return { success: false, error: err.message || 'Error al iniciar sesión con Google' };
+      console.error('Error en loginWithGoogle:', err);
+      // Fallback for mobile popup blocked
+      if (err.code === 'auth/popup-blocked' || err.code === 'auth/cancelled-popup-request') {
+        try {
+          const provider = new GoogleAuthProvider();
+          await signInWithRedirect(this.auth, provider);
+          return { success: true };
+        } catch (redirectErr: any) {
+          return { success: false, error: redirectErr.message };
+        }
+      }
+      return { success: false, error: err.code || err.message || 'Error al iniciar sesión con Google' };
     }
   }
 
