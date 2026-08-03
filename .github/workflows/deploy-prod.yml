@@ -1,0 +1,35 @@
+name: Deploy Production Environment
+
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  deploy_prod:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - run: npm ci
+
+      - run: npm run build
+        env:
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY_PROD }}
+          VITE_FIREBASE_AUTH_DOMAIN: iron-tracker-gym.firebaseapp.com
+          VITE_FIREBASE_PROJECT_ID: iron-tracker-gym
+          VITE_FIREBASE_STORAGE_BUCKET: iron-tracker-gym.firebasestorage.app
+          VITE_FIREBASE_MESSAGING_SENDER_ID: "133921521903"
+          VITE_FIREBASE_APP_ID: "1:133921521903:web:94a47a0b86f4f2eb321b1a"
+
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_IRON_TRACKER_GYM }}'
+          channelId: live
+          projectId: iron-tracker-gym
