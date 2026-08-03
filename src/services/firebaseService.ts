@@ -167,6 +167,17 @@ class FirebaseService {
     });
   }
 
+  public subscribeTheme(onSuccess: (theme: string) => void): Unsubscribe | null {
+    if (!this.db || !this.user) return null;
+
+    const docRef = doc(this.db, 'users', this.user.uid, 'settings', 'theme');
+    return onSnapshot(docRef, snapshot => {
+      if (snapshot.exists() && snapshot.data().value) {
+        onSuccess(snapshot.data().value);
+      }
+    });
+  }
+
   public async addWorkout(workout: Workout): Promise<boolean> {
     if (!this.db || !this.user) return false;
     try {
@@ -229,6 +240,18 @@ class FirebaseService {
       return true;
     } catch (e) {
       console.error('Error saving Whoop token:', e);
+      return false;
+    }
+  }
+
+  public async saveTheme(theme: string): Promise<boolean> {
+    if (!this.db || !this.user) return false;
+    try {
+      const docRef = doc(this.db, 'users', this.user.uid, 'settings', 'theme');
+      await setDoc(docRef, { value: theme, updatedAt: Date.now() }, { merge: true });
+      return true;
+    } catch (e) {
+      console.error('Error saving theme:', e);
       return false;
     }
   }
