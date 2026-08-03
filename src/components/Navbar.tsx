@@ -1,5 +1,5 @@
-import React from 'react';
-import { Dumbbell, Brain, LineChart, Table, Target, LucideIcon } from 'lucide-react';
+﻿import React from 'react';
+import { Dumbbell, Brain, LineChart, Table, LucideIcon } from 'lucide-react';
 import { TabType } from '../types/gym';
 
 interface NavbarProps {
@@ -20,11 +20,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange }) => {
     { id: 'coach', label: 'COACH', icon: Brain, highlight: true },
     { id: 'charts', label: 'PROGRESO', icon: LineChart },
     { id: 'history', label: 'MARCAS', icon: Table },
-    { id: 'tools', label: 'TOOLS', icon: Target },
   ];
 
   return (
-    <nav className="fixed bottom-0 w-full bg-zinc-950 border-t-2 border-zinc-900 pb-safe z-40">
+    <nav className="fixed bottom-0 w-full bg-zinc-950/95 backdrop-blur-xl border-t border-zinc-900 pb-safe z-40 shadow-2xl">
       <div className="max-w-md mx-auto flex justify-between">
         {items.map(item => {
           const Icon = item.icon;
