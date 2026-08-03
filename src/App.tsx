@@ -7,6 +7,7 @@ import { ProgressTab } from './components/tabs/ProgressTab';
 import { HistoryTab } from './components/tabs/HistoryTab';
 import { ToolsTab } from './components/tabs/ToolsTab';
 
+import { VersionBanner } from './components/VersionBanner';
 import { useTimer } from './hooks/useTimer';
 import { useWorkouts } from './hooks/useWorkouts';
 import { useTheme } from './hooks/useTheme';
@@ -31,6 +32,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-black text-zinc-900 dark:text-zinc-100 font-sans pb-24 selection:bg-red-600/40">
+      <VersionBanner />
       <Header
         formattedTime={formattedTime}
         isRunning={isRunning}
