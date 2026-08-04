@@ -48,6 +48,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
   const [showPwaInfo, setShowPwaInfo] = useState(false);
   const [clientIdInput, setClientIdInput] = useState(whoopService.getWhoopClientId());
   const [savedClientId, setSavedClientId] = useState(false);
+  const isSyncActive = isFirebaseActive || firebaseService.isReady();
 
   if (!isOpen) return null;
 
@@ -98,7 +99,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
       />
 
       {/* Drawer deslizante lateral estilo App Nativa */}
-      <aside className="fixed inset-y-0 right-0 w-full max-w-sm sm:max-w-md bg-zinc-950/95 backdrop-blur-2xl border-l border-zinc-800/80 shadow-2xl z-50 flex flex-col h-full transform transition-transform duration-300 ease-out translate-x-0">
+      <aside className="fixed inset-y-0 right-0 w-full max-w-sm sm:max-w-md bg-zinc-950/95 backdrop-blur-2xl border-l border-zinc-800/80 shadow-2xl z-50 flex flex-col h-full transform transition-transform duration-300 ease-out translate-x-0 pt-safe pt-[env(safe-area-inset-top)]">
         {/* Drag Handle superior para vista móvil */}
         <div className="w-12 h-1.5 bg-zinc-800 rounded-full mx-auto mt-2.5 sm:hidden" />
 
@@ -183,7 +184,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Cloud
-                  className={`w-4 h-4 ${isFirebaseActive ? 'text-green-400' : 'text-yellow-400'}`}
+                  className={`w-4 h-4 ${isSyncActive ? 'text-green-400' : 'text-yellow-400'}`}
                 />
                 <span className="text-xs font-black text-white uppercase tracking-wider">
                   SINCRONIZACIÓN
