@@ -23,6 +23,7 @@ import {
   setDoc,
   deleteDoc,
   updateDoc,
+  getDoc,
   Firestore,
   Unsubscribe
 } from 'firebase/firestore';
@@ -294,6 +295,32 @@ class FirebaseService {
     } catch (e) {
       console.error('Error saving theme:', e);
       return false;
+    }
+  }
+  public async saveOnboarding(completed: boolean): Promise<boolean> {
+    if (!this.db || !this.user) return false;
+    try {
+      const docRef = doc(this.db, "users", this.user.uid, "settings", "onboarding");
+      await setDoc(docRef, { completed, updatedAt: Date.now() }, { merge: true });
+      return true;
+    } catch (e) {
+      console.error("Error saving onboarding status:", e);
+      return false;
+    }
+  }
+
+  public async getOnboarding(): Promise<boolean | null> {
+    if (!this.db || !this.user) return null;
+    try {
+      const docRef = doc(this.db, "users", this.user.uid, "settings", "onboarding");
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        return docSnap.data().completed === true;
+      }
+      return null;
+    } catch (e) {
+      console.error("Error getting onboarding status:", e);
+      return null;
     }
   }
 }
