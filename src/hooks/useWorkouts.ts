@@ -18,25 +18,40 @@ export function useWorkouts() {
     setWorkouts(localW);
     setCustomExercises(localEx);
 
-    // 2. Check & Subscribe to Firebase Firestore if configured
-    if (firebaseService.isReady()) {
-      setIsFirebaseActive(true);
-      const unsubW = firebaseService.subscribeWorkouts(fsWorkouts => {
-        setWorkouts(fsWorkouts);
-        storageService.saveWorkouts(fsWorkouts); // sync local copy
-      });
+    let unsubW: (() => void) | null = null;
+    let unsubEx: (() => void) | null = null;
 
-      const unsubEx = firebaseService.subscribeCustomExercises(fsEx => {
-        setCustomExercises(fsEx);
-      });
+    // 2. Subscribe to Firebase Auth state changes so Firestore sync updates dynamically
+    const unsubAuth = firebaseService.onAuthChange(() => {
+      if (unsubW) {
+        unsubW();
+        unsubW = null;
+      }
+      if (unsubEx) {
+        unsubEx();
+        unsubEx = null;
+      }
 
-      return () => {
-        if (unsubW) unsubW();
-        if (unsubEx) unsubEx();
-      };
-    } else {
-      setIsFirebaseActive(false);
-    }
+      if (firebaseService.isReady()) {
+        setIsFirebaseActive(true);
+        unsubW = firebaseService.subscribeWorkouts(fsWorkouts => {
+          setWorkouts(fsWorkouts);
+          storageService.saveWorkouts(fsWorkouts); // sync local copy
+        });
+
+        unsubEx = firebaseService.subscribeCustomExercises(fsEx => {
+          setCustomExercises(fsEx);
+        });
+      } else {
+        setIsFirebaseActive(false);
+      }
+    });
+
+    return () => {
+      if (unsubW) unsubW();
+      if (unsubEx) unsubEx();
+      if (unsubAuth) unsubAuth();
+    };
   }, []);
 
   const reloadFirebaseConfig = () => {

@@ -37,7 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
     (currentUser?.isAnonymous ? 'Invitado' : 'Usuario');
 
   return (
-    <header className="bg-zinc-100 dark:bg-zinc-950 border-b-2 border-red-600 p-4 pt-safe sticky top-0 z-30 flex flex-col gap-3 shadow-lg shadow-black/10 dark:shadow-black/50">
+    <header className="bg-zinc-100 dark:bg-zinc-950 border-b-2 border-red-600 p-4 pt-safe pt-[env(safe-area-inset-top)] sticky top-0 z-30 flex flex-col gap-3 shadow-lg shadow-black/10 dark:shadow-black/50">
       <div className="max-w-md mx-auto w-full flex items-center justify-between">
         {/* Marca & Botón Drawer Perfil */}
         <div className="flex items-center gap-2">
@@ -56,7 +56,7 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="text-[10px] font-black uppercase max-w-[70px] truncate hidden sm:inline">
                 {userDisplayName}
               </span>
-              <span className={`w-2 h-2 rounded-full ${isFirebaseActive ? 'bg-green-500' : 'bg-yellow-500'}`} />
+              <span className={`w-2 h-2 rounded-full ${isFirebaseActive || firebaseService.isReady() ? 'bg-green-500' : 'bg-yellow-500'}`} />
             </button>
 
             {/* Botón rápido Cloud / Estado */}
@@ -69,7 +69,7 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
               title="Estado de Sincronización y Configuración"
             >
-              {isFirebaseActive ? <Cloud className="w-4 h-4" /> : <Settings className="w-4 h-4" />}
+              {(isFirebaseActive || firebaseService.isReady()) ? <Cloud className="w-4 h-4" /> : <Settings className="w-4 h-4" />}
             </button>
           </div>
         </div>
